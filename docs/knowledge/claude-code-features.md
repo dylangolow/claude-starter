@@ -1,40 +1,166 @@
 # Claude Code Features Guide
 
-Reference for underutilized Claude Code features that improve workflow efficiency.
+Reference for Claude Code features that improve workflow efficiency.
+
+## File Structure Overview
+
+```
+project/
+├── AGENTS.md              # Cross-tool context (Copilot, Cursor, Codex, etc.)
+├── CLAUDE.md              # Claude-specific features
+└── .claude/
+    ├── agents/            # Custom subagents
+    │   └── code-reviewer.md
+    └── skills/            # Project skills
+        └── deploy/
+            └── SKILL.md
+```
+
+User-level configuration:
+```
+~/.claude/
+├── CLAUDE.md              # Personal preferences (all projects)
+├── settings.json          # Permissions, hooks, thinking mode
+├── agents/                # Personal subagents
+└── skills/                # Personal skills
+```
+
+---
+
+## Subagents
+
+Specialized agents for specific task types. Run in separate context windows.
+
+### File Format
+
+Markdown files with YAML frontmatter in `.claude/agents/` or `~/.claude/agents/`:
+
+```markdown
+---
+name: code-reviewer
+description: Reviews code changes for quality, security, and style
+tools: Read, Grep, Glob
+model: haiku
+---
+
+You are a code reviewer. Analyze code for:
+
+## Security
+- OWASP top 10 vulnerabilities
+- Input validation
+- Authentication/authorization issues
+
+## Quality
+- Error handling
+- Edge cases
+- Performance concerns
+
+## Style
+- Consistency with codebase conventions
+- Naming clarity
+- Code organization
+
+Provide specific, actionable feedback with file:line references.
+```
+
+### Configuration Fields
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `name` | Yes | Unique identifier (lowercase, hyphens, max 64 chars) |
+| `description` | Yes | When Claude should use this subagent |
+| `tools` | No | Comma-separated list (inherits all if omitted) |
+| `model` | No | `haiku`, `sonnet`, `opus`, or `inherit` |
+| `skills` | No | Skills to auto-load |
+
+### Built-in Subagent Types
+
+| Type | Purpose | Best For |
+|------|---------|----------|
+| `Explore` | Fast codebase search | "Where is X?", file patterns |
+| `Plan` | Implementation planning | Architecture decisions |
+| `claude-code-guide` | Claude Code docs | "How do I use X feature?" |
+| `general-purpose` | Complex multi-step | Research, broad tasks |
+
+### When to Create Custom Subagents
+
+- Repeated review/validation workflows
+- Specialized domains (security audit, performance)
+- Multi-step processes benefiting from focused context
+
+---
 
 ## Skills
 
-Personal AI capabilities that Claude uses autonomously based on context.
+Capabilities Claude uses autonomously based on context. Share main conversation context.
 
-### Location
-- **Personal skills**: `~/.claude/skills/` (apply to all projects)
-- **Project skills**: `.claude/skills/` (project-specific)
+### Directory Structure
 
-### Creating a Skill
-Create a markdown file describing when and how to use the skill:
-
-```markdown
-# Skill Name
-
-## Description
-What this skill does.
-
-## When to Use
-- Trigger condition 1
-- Trigger condition 2
-
-## Workflow
-1. Step one
-2. Step two
-
-## Examples
-...
+```
+.claude/skills/
+└── deploy/
+    ├── SKILL.md           # Required - main skill file
+    ├── reference.md       # Optional - additional context
+    └── scripts/           # Optional - helper scripts
+        └── validate.sh
 ```
 
-### Recommended Personal Skills
-- `migration-workflow.md` - Database migration safety
-- `type-sync-check.md` - Monorepo type validation
-- `cross-repo-learning.md` - Pattern capture
+### File Format
+
+SKILL.md with YAML frontmatter:
+
+```markdown
+---
+name: deploy
+description: Handles deployment to Cloud Run with pre/post validation
+allowed-tools: Bash, Read, Grep
+---
+
+# Deploy Skill
+
+## When to Use
+- User asks to deploy a service
+- After successful build completion
+- When pushing changes to production
+
+## Workflow
+
+1. **Pre-deployment checks**
+   - Verify build passes: `pnpm build`
+   - Check for uncommitted changes
+   - Validate environment variables
+
+2. **Deploy**
+   - Run deployment command (e.g., `pnpm deploy`, `gcloud run deploy`)
+   - Monitor for errors
+
+3. **Post-deployment**
+   - Verify health endpoint
+   - Check logs for errors
+   - Report deployment URL
+
+## Error Handling
+- If build fails: Stop and report errors
+- If deploy fails: Check logs, suggest fixes
+- If health check fails: Rollback guidance
+```
+
+### Configuration Fields
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `name` | Yes | Skill identifier |
+| `description` | Yes | When to use this skill |
+| `allowed-tools` | No | Restrict available tools |
+
+### Subagents vs Skills
+
+| Aspect | Subagents | Skills |
+|--------|-----------|--------|
+| **Context** | Separate window | Shared with main |
+| **Invocation** | Explicit or auto-delegated | Autonomous by Claude |
+| **Use case** | Task-specific workflows | Expertise extension |
+| **File** | Single `.md` file | Directory with `SKILL.md` |
 
 ---
 
@@ -43,6 +169,7 @@ What this skill does.
 Shell commands that execute at lifecycle events.
 
 ### Available Events
+
 | Event | Trigger | Use Case |
 |-------|---------|----------|
 | `PreToolUse` | Before tool execution | Block dangerous operations |
@@ -52,6 +179,7 @@ Shell commands that execute at lifecycle events.
 | `Stop` | Session ends | Cleanup, reminders |
 
 ### Configuration
+
 In `~/.claude/settings.json`:
 
 ```json
@@ -63,7 +191,18 @@ In `~/.claude/settings.json`:
         "hooks": [
           {
             "type": "command",
-            "command": "echo 'File modified'"
+            "command": "npx prettier --write $CLAUDE_FILE_PATH"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo $CLAUDE_TOOL_INPUT | grep -q 'push --force' && exit 1 || exit 0"
           }
         ]
       }
@@ -73,38 +212,10 @@ In `~/.claude/settings.json`:
 ```
 
 ### Recommended Hooks
-- **PostToolUse**: Auto-format TypeScript files after edit
-- **Stop**: Remind to capture learnings
+
+- **PostToolUse**: Auto-format files after edit
 - **PreToolUse**: Block force push, hard reset
-
----
-
-## Subagents
-
-Specialized agents for specific task types.
-
-### Built-in Types
-| Type | Purpose | Tools |
-|------|---------|-------|
-| `Explore` | Fast codebase search | Read-only, Haiku model |
-| `Plan` | Implementation planning | All tools |
-| `claude-code-guide` | Claude Code documentation | Docs access |
-| `general-purpose` | Complex multi-step tasks | All tools |
-
-### When to Use Explore
-- Finding files by pattern
-- Understanding code structure
-- "Where is X handled?" questions
-- Any search needing multiple attempts
-
-```
-Use Task tool with subagent_type=Explore
-```
-
-### Benefits
-- Separate context window (doesn't pollute main conversation)
-- Cheaper model for simple tasks
-- Parallel execution possible
+- **Stop**: Remind to capture learnings
 
 ---
 
@@ -113,11 +224,17 @@ Use Task tool with subagent_type=Explore
 Control which operations require confirmation.
 
 ### Configuration
+
 In `~/.claude/settings.json`:
 
 ```json
 {
   "permissions": {
+    "allow": [
+      "Read(**/*)",
+      "Glob(**/*)",
+      "Grep(**/*)"
+    ],
     "ask": [
       "Edit(**/CLAUDE.md)",
       "Edit(**/migrations/**)",
@@ -126,32 +243,51 @@ In `~/.claude/settings.json`:
     ],
     "deny": [
       "Bash(git push --force*)",
-      "Bash(git reset --hard*)"
+      "Bash(git reset --hard*)",
+      "Bash(rm -rf /*)"
     ]
   }
 }
 ```
 
+### Permission Levels
+
+| Level | Behavior |
+|-------|----------|
+| `allow` | Execute without asking |
+| `ask` | Prompt for confirmation |
+| `deny` | Block entirely |
+
 ### Recommended Rules
-- **ask**: Protected files, deployment commands, database pushes
+
+- **allow**: Read-only operations, safe searches
+- **ask**: Protected files, deployment, database changes
 - **deny**: Force push, hard reset, destructive commands
 
 ---
 
-## Settings Reference
+## Full Settings Example
 
-Full `~/.claude/settings.json` example:
+Complete `~/.claude/settings.json`:
 
 ```json
 {
-  "alwaysThinkingEnabled": true,
   "permissions": {
+    "allow": [
+      "Read(**/*)",
+      "Glob(**/*)",
+      "Grep(**/*)",
+      "Bash(pnpm *)",
+      "Bash(npm run *)"
+    ],
     "ask": [
       "Edit(**/CLAUDE.md)",
+      "Edit(**/AGENTS.md)",
       "Edit(**/migrations/**)",
       "Bash(supabase db reset*)",
       "Bash(supabase db push*)",
-      "Bash(git push*)"
+      "Bash(git push*)",
+      "Bash(gcloud * delete*)"
     ],
     "deny": [
       "Bash(git push --force*)",
@@ -165,7 +301,7 @@ Full `~/.claude/settings.json` example:
         "hooks": [
           {
             "type": "command",
-            "command": "echo 'Consider: patterns worth capturing as skills or knowledge docs?'"
+            "command": "echo 'Consider: patterns worth capturing as skills?'"
           }
         ]
       }
@@ -178,29 +314,31 @@ Full `~/.claude/settings.json` example:
 
 ## Capturing Learnings
 
-Turn discoveries into reusable knowledge - don't just note them, codify them.
+Turn discoveries into reusable knowledge.
 
 ### Where to Capture
+
 | Pattern Type | Target Location |
 |--------------|-----------------|
-| Project conventions | `CLAUDE.md` (project root) |
+| Project setup, commands | `AGENTS.md` |
+| Claude-specific patterns | `CLAUDE.md` |
 | Technical guides | `docs/knowledge/*.md` |
 | Personal preferences | `~/.claude/CLAUDE.md` |
-| Reusable workflows | `~/.claude/skills/*.md` |
+| Reusable workflows | `.claude/skills/` or `~/.claude/skills/` |
+| Custom reviewers | `.claude/agents/` or `~/.claude/agents/` |
 | Safety rules | `~/.claude/settings.json` |
 
 ### Workflow
+
 1. **Notice**: Identify reusable pattern during work
 2. **Categorize**: Project-specific vs personal vs template
 3. **Offer**: Ask "Want me to add this to [target]?"
-4. **Edit**: Make the actual change if confirmed
+4. **Create**: Make the actual change if confirmed
 
 ### What to Capture
-- Gotchas and footguns
-- Service integration patterns
-- Safety rules
-- Performance optimizations
-- Tool/framework patterns
-- Repeated workflows (-> skills)
-- Manual validation steps (-> hooks)
-- Dangerous commands (-> permissions)
+
+- Gotchas and footguns → knowledge docs or AGENTS.md
+- Safety rules → settings.json permissions
+- Repeated workflows (3+ times) → skills
+- Review/validation patterns → subagents
+- Tool preferences → CLAUDE.md

@@ -15,9 +15,11 @@ git status
 
 ### 2. Existing Files
 Check for files that might be overwritten:
+- `AGENTS.md` - Ask before replacing
 - `CLAUDE.md` - Ask before replacing
 - `package.json` - Merge or replace?
 - `docs/` - Preserve existing content?
+- `.claude/` - Preserve existing agents/skills?
 
 ### 3. Working Directory
 Confirm this is the intended project root.
@@ -99,36 +101,60 @@ Ask: "Any of these planned?" (helps include relevant knowledge docs)
 
 ### Step 5: Generate Files
 
-Based on answers, generate:
+Based on answers, generate the following:
 
-1. **Update `CLAUDE.md`**
-   - Fill in Project Overview
-   - Adjust Structure section
-   - Update Commands for chosen stack
-   - Remove irrelevant sections
+#### 1. Create `AGENTS.md` (Cross-tool context)
 
-2. **Create `docs/plans/ROADMAP.md`**
-   - Add Phase 1 based on project type
-   - Include relevant features in backlog
+Fill in based on answers:
+- Project Overview (one-liner)
+- Structure section (monorepo vs standalone)
+- Setup commands for chosen stack
+- Code style (keep defaults unless specified)
+- Database section (if applicable)
+- Deployment commands (if known)
 
-3. **Create `docs/plans/IMPLEMENTATION.md`**
-   - Architecture diagram for chosen structure
-   - Phase 1 deliverables based on stack
+This file works with any AI coding tool (Copilot, Cursor, Codex, Jules, etc.)
 
-4. **Create `package.json`** (if monorepo)
-   - Workspace configuration
-   - Common scripts
+#### 2. Create `CLAUDE.md` (Claude-specific)
 
-5. **Create `pnpm-workspace.yaml`** (if monorepo)
-   ```yaml
-   packages:
-     - "apps/*"
-     - "packages/*"
-   ```
+Keep the template structure, customize:
+- Remove irrelevant sections
+- Add project-specific safety rules if needed
+- Reference any custom agents/skills to be created
 
-6. **Update `.gitignore`**
-   - Ensure `context/` is ignored
-   - Add stack-specific ignores
+#### 3. Create `.claude/` directory structure
+
+```
+.claude/
+├── agents/
+│   └── .gitkeep
+└── skills/
+    └── .gitkeep
+```
+
+#### 4. Create `docs/plans/ROADMAP.md`
+- Add Phase 1 based on project type
+- Include relevant features in backlog
+
+#### 5. Create `docs/plans/IMPLEMENTATION.md`
+- Architecture diagram for chosen structure
+- Phase 1 deliverables based on stack
+
+#### 6. Create `package.json` (if monorepo)
+- Workspace configuration
+- Common scripts
+
+#### 7. Create `pnpm-workspace.yaml` (if monorepo)
+```yaml
+packages:
+  - "apps/*"
+  - "packages/*"
+```
+
+#### 8. Update `.gitignore`
+- Ensure `context/` is ignored
+- Ensure `.claude/` agents/skills are committed (NOT ignored)
+- Add stack-specific ignores
 
 ---
 
@@ -137,6 +163,11 @@ Based on answers, generate:
 After generating files, provide:
 
 1. **Summary of what was created**
+   - `AGENTS.md` - Cross-tool project context
+   - `CLAUDE.md` - Claude-specific configuration
+   - `.claude/` - Directory for agents and skills
+   - `docs/plans/` - Planning documents
+
 2. **Recommended next steps**, e.g.:
    - `pnpm install`
    - `supabase init` (if using Supabase)
@@ -145,7 +176,8 @@ After generating files, provide:
 
 3. **Offer to help with first task**
    - "Want me to create the initial package structure?"
-   - "Should I set up the Telegram bot scaffold?"
+   - "Should I set up the API scaffold?"
+   - "Want me to create a custom subagent for [workflow]?"
 
 ---
 
@@ -153,34 +185,30 @@ After generating files, provide:
 
 ### Telegram Bot Project
 
-If user selected Telegram bot, include in CLAUDE.md:
+If user selected Telegram bot, include in `AGENTS.md`:
 ```markdown
 ## Bot Patterns
 - Use grammy library (better TypeScript support than telegraf)
 - Commands in `apps/bot/src/commands/`
 - Conversations in `apps/bot/src/conversations/`
 - Use webhook mode in production, polling in dev
-- Share business logic via `@[project]/core`
 ```
 
 Reference `docs/knowledge/telegram-bots.md` for setup details.
 
 ### Supabase Project
 
-If user selected Supabase, include:
+If user selected Supabase, include in `AGENTS.md`:
 ```markdown
 ## Database (Supabase)
 - Migrations in `supabase/migrations/`
-- **Migration-first development**:
-  1. Start features with migration files
-  2. Apply locally with `supabase migration up`
-  3. Test end-to-end locally
-  4. Confirm before `supabase db push`
+- Migration-first development (create migration before code)
+- Edge Functions for external API calls
 ```
 
 ### AI/LLM Integration
 
-If user selected AI features, include:
+If user selected AI features, include in `AGENTS.md`:
 ```markdown
 ## AI Patterns
 - Use Anthropic SDK for Claude
@@ -188,6 +216,30 @@ If user selected AI features, include:
 - Implement rate limiting
 - Consider streaming for long responses
 ```
+
+---
+
+## Custom Agents & Skills
+
+### When to Suggest Creating an Agent
+
+Suggest a custom subagent when user has:
+- A repeated review/validation workflow
+- A specialized domain (security audit, performance review)
+- A multi-step process that benefits from focused context
+
+Example prompt:
+> "Since you'll be doing [X] frequently, want me to create a custom subagent for it?"
+
+### When to Suggest Creating a Skill
+
+Suggest a skill when:
+- A workflow is repeated 3+ times
+- There are specific steps Claude should follow autonomously
+- Domain expertise can be codified
+
+Example prompt:
+> "This deployment workflow has several steps. Want me to create a skill so I handle it automatically next time?"
 
 ---
 
@@ -199,5 +251,23 @@ Point users to relevant docs based on their choices:
 |--------|--------------|
 | Telegram bot | `docs/knowledge/telegram-bots.md` |
 | Monorepo | `docs/knowledge/monorepo-setup.md` |
-| Supabase | `docs/knowledge/supabase-patterns.md` |
-| Cloud Run | `docs/knowledge/cloud-run-deploy.md` |
+| Supabase | `docs/knowledge/supabase-edge-functions.md` |
+| Claude features | `docs/knowledge/claude-code-features.md` |
+
+---
+
+## File Relationship Summary
+
+```
+project/
+├── AGENTS.md              # Cross-tool: setup, structure, commands
+├── CLAUDE.md              # Claude: safety, workflow, tool prefs
+├── .claude/
+│   ├── agents/            # Custom subagents (YAML frontmatter + prompt)
+│   └── skills/            # Project skills (SKILL.md + supporting files)
+├── docs/
+│   ├── plans/             # ROADMAP.md, IMPLEMENTATION.md
+│   ├── specs/             # Feature specifications
+│   └── knowledge/         # Reusable patterns
+└── context/               # Ephemeral files (gitignored)
+```
