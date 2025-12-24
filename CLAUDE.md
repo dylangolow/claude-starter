@@ -112,6 +112,18 @@ Keep CLAUDE.md fresh as the project evolves:
 - **Knowledge docs**: Move reusable patterns to `docs/knowledge/` for reference across projects
 
 ## Knowledge Base
-Reference `docs/knowledge/` for common patterns:
-- `telegram-bots.md` - Bot setup, grammy, webhooks
-- `monorepo-setup.md` - pnpm workspaces, shared packages
+Reference `docs/knowledge/` when working on related features:
+- `telegram-bots.md` - Read before implementing bots
+- `monorepo-setup.md` - Read when setting up workspaces
+- `supabase-edge-functions.md` - Read before creating edge functions
+- `claude-code-features.md` - Read when setting up skills, hooks, or permissions
+
+**Proactively check relevant knowledge docs before implementing features they cover.**
+
+## User-Level Setup
+For cross-project Claude Code configuration, set up in `~/.claude/`:
+- `CLAUDE.md` - Personal preferences (code style, accounts, safety rules)
+- `skills/*.md` - Reusable workflows (migration-workflow, type-sync-check)
+- `settings.json` - Permissions, hooks, thinking mode
+
+See `docs/knowledge/claude-code-features.md` for setup guide.
