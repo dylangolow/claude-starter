@@ -102,6 +102,7 @@ After deploying consolidated services, suggest cleanup of:
 ## Tool Preferences
 - Prefer CLI commands over MCP tools when both are available (more reliable, consistent auth)
 - Use project's package manager based on lockfile (pnpm-lock.yaml, package-lock.json, yarn.lock)
+- **Edge Functions over pg_net**: For webhooks, notifications, and external API calls, prefer TypeScript Edge Functions over PostgreSQL pg_net triggers. Edge Functions provide better observability, logging, error handling, and are easier to debug.
 
 ## Updating This File
 Keep CLAUDE.md fresh as the project evolves:
