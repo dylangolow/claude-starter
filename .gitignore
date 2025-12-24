@@ -1,0 +1,46 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+dist/
+build/
+.next/
+.nuxt/
+.output/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Test coverage
+coverage/
+
+# Ephemeral context files (never committed)
+context/
+
+# Supabase local
+supabase/.branches/
+supabase/.temp/
+
+# Firebase
+.firebase/
+firebase-debug.log
+
+# Secrets
+*.pem
+*.key
+credentials.json
