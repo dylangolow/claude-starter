@@ -27,6 +27,7 @@ Copy the files you need into your existing project.
 claude-starter/
 ├── AGENTS.md              # Cross-tool context (Copilot, Cursor, Codex, Jules)
 ├── CLAUDE.md              # Claude-specific features and config
+├── CODEX.md               # Codex-specific workflow guidance
 ├── CLAUDE_INIT.md         # Bootstrap guide for /init command
 ├── .claude/
 │   ├── agents/            # Custom subagents (YAML frontmatter + prompt)
@@ -35,6 +36,7 @@ claude-starter/
 │       └── commit/
 ├── docs/
 │   ├── HOW_TO_USE_CLAUDE.md   # Usage guide and best practices
+│   ├── HOW_TO_USE_CODEX.md    # Usage guide and best practices
 │   ├── plans/
 │   │   ├── ROADMAP.md         # What to build (priority queue)
 │   │   └── IMPLEMENTATION.md  # How to build it (technical guide)
@@ -54,6 +56,7 @@ claude-starter/
 |------|---------|------------|
 | `AGENTS.md` | Project setup, structure, commands | Any AI tool |
 | `CLAUDE.md` | Safety rules, workflow, Claude features | Claude Code |
+| `CODEX.md` | Workflow guidance | Codex |
 
 This separation means:
 - Your project works with Copilot, Cursor, Codex, and other AI tools

@@ -44,6 +44,8 @@ Where types live, any gotchas (e.g., "update both X and Y when adding fields")
 URLs, test accounts, environment setup.
 ```
 
+If you want to support Codex as well, create a sibling `CODEX.md` with tool-specific workflow guidance.
+
 ### 2. Create `docs/plans/` for planning docs
 
 ```

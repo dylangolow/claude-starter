@@ -42,6 +42,17 @@ pnpm build
 pnpm test
 ```
 
+## Session Workflow
+
+- Start: read `AGENTS.md`, then `docs/plans/ROADMAP.md` and `docs/plans/IMPLEMENTATION.md`
+- Before building: read the relevant `docs/specs/*.md`
+- End: update deliverable checkboxes with user confirmation
+
+## Planning
+
+- For small tasks, proceed directly.
+- For medium/large tasks, propose a short plan and track progress in `docs/plans/IMPLEMENTATION.md` or the relevant `docs/specs/*.md`.
+
 ## Code Style
 
 - TypeScript strict mode

@@ -33,6 +33,7 @@ Confirm this is the intended project root.
 Ask:
 - "What are you building?" (one-liner for Project Overview)
 - "Project name?" (for package.json name field)
+- "Which AI tools should this repo support? (Claude, Codex, both)"
 
 ### Step 2: Architecture
 
@@ -122,7 +123,16 @@ Keep the template structure, customize:
 - Add project-specific safety rules if needed
 - Reference any custom agents/skills to be created
 
-#### 3. Create `.claude/` directory structure
+#### 3. Create `CODEX.md` (Codex-specific)
+
+If the user wants Codex support, create a minimal workflow guide:
+- Start of session checklist
+- Planning approach for medium/large tasks
+- End of session updates
+
+If the user wants both Claude and Codex, create both `CLAUDE.md` and `CODEX.md`.
+
+#### 4. Create `.claude/` directory structure
 
 ```
 .claude/
@@ -132,26 +142,26 @@ Keep the template structure, customize:
     └── .gitkeep
 ```
 
-#### 4. Create `docs/plans/ROADMAP.md`
+#### 5. Create `docs/plans/ROADMAP.md`
 - Add Phase 1 based on project type
 - Include relevant features in backlog
 
-#### 5. Create `docs/plans/IMPLEMENTATION.md`
+#### 6. Create `docs/plans/IMPLEMENTATION.md`
 - Architecture diagram for chosen structure
 - Phase 1 deliverables based on stack
 
-#### 6. Create `package.json` (if monorepo)
+#### 7. Create `package.json` (if monorepo)
 - Workspace configuration
 - Common scripts
 
-#### 7. Create `pnpm-workspace.yaml` (if monorepo)
+#### 8. Create `pnpm-workspace.yaml` (if monorepo)
 ```yaml
 packages:
   - "apps/*"
   - "packages/*"
 ```
 
-#### 8. Update `.gitignore`
+#### 9. Update `.gitignore`
 - Ensure `context/` is ignored
 - Ensure `.claude/` agents/skills are committed (NOT ignored)
 - Add stack-specific ignores
@@ -165,6 +175,7 @@ After generating files, provide:
 1. **Summary of what was created**
    - `AGENTS.md` - Cross-tool project context
    - `CLAUDE.md` - Claude-specific configuration
+   - `CODEX.md` - Codex-specific workflow guide (if requested)
    - `.claude/` - Directory for agents and skills
    - `docs/plans/` - Planning documents
 
@@ -262,6 +273,7 @@ Point users to relevant docs based on their choices:
 project/
 ├── AGENTS.md              # Cross-tool: setup, structure, commands
 ├── CLAUDE.md              # Claude: safety, workflow, tool prefs
+├── CODEX.md               # Codex: workflow guidance
 ├── .claude/
 │   ├── agents/            # Custom subagents (YAML frontmatter + prompt)
 │   └── skills/            # Project skills (SKILL.md + supporting files)
