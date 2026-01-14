@@ -1,6 +1,6 @@
 # Claude Starter Template
 
-A project template for working effectively with AI coding agents.
+A project template for working effectively with AI coding agents, with built-in guidance for Claude and Codex.
 
 ## Quick Start
 
