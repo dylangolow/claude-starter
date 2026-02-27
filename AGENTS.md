@@ -11,7 +11,7 @@
 ```
 [project]/
 ├── apps/                    # Deployable applications
-│   ├── web/                # Frontend (React, Vue, etc.)
+│   ├── web/                # Frontend (React, Next.js, etc.)
 │   ├── api/                # Backend API
 │   └── bot/                # Telegram bot, CLI, etc.
 │
@@ -19,11 +19,19 @@
 │   └── core/              # Shared types, utils, business logic
 │
 ├── supabase/              # Database (if using Supabase)
-│   └── migrations/
+│   ├── migrations/
+│   └── functions/         # Edge Functions
 │
-└── docs/                  # Documentation
-    ├── plans/             # ROADMAP.md, IMPLEMENTATION.md
-    └── specs/             # Feature specifications
+├── docs/                  # Documentation
+│   ├── plans/             # ROADMAP.md, IMPLEMENTATION.md
+│   ├── specs/             # Feature specifications
+│   ├── analytics/         # Event tracking docs
+│   └── knowledge/         # Reusable reference patterns
+│
+├── .github/               # Dependabot, CI workflows
+│   └── dependabot.yml
+├── .mcp.json              # MCP server config (gitignored)
+└── context/               # Ephemeral files (gitignored)
 ```
 
 ## Setup
@@ -38,8 +46,9 @@ pnpm dev
 # Build
 pnpm build
 
-# Run tests
-pnpm test
+# Lint / types
+pnpm lint
+pnpm typecheck
 ```
 
 ## Session Workflow
@@ -76,12 +85,11 @@ pnpm test:coverage     # With coverage
 - When adding fields, update core package first
 
 ### API Patterns
-- Routes in `apps/api/src/routes/`
+- Routes in `apps/api/src/routes/` (or `apps/web/src/app/api/` for Next.js)
 - Error handling via shared helpers
 - Consistent logging format
 
 ### Frontend Patterns
-- React Query for data fetching
 - Mobile-first responsive design
 - Component library in `components/ui/`
 
@@ -94,12 +102,24 @@ pnpm test:coverage     # With coverage
   3. Build feature against schema
   4. Push to remote when verified
 
-## Deployment
+## Safety Rules
 
-```bash
-pnpm deploy:api       # Deploy API
-pnpm deploy:web       # Deploy frontend
-```
+These apply to all AI tools working in this repo:
+
+### Git Safety
+- Never `git push --force` without explicit user confirmation
+- Use `git restore --staged <file>` to unstage (not `git reset`)
+- Never `git reset --hard` without confirmation
+- Always confirm before pushing or destructive actions
+
+### Database Safety
+- Never run destructive commands (`db reset`, `drop table`) without asking
+- Confirm before pushing migrations to remote
+- Never delete `.env` files
+
+### Environment Variables
+- Never commit secrets or `.env` files
+- Reference `.env.example` for required variables (see below)
 
 ## Environment Variables
 
@@ -107,8 +127,15 @@ Required variables (see `.env.example`):
 - `DATABASE_URL` - Database connection
 - `API_KEY` - External service key
 
+## Deployment
+
+```bash
+pnpm deploy:api       # Deploy API
+pnpm deploy:web       # Deploy frontend
+```
+
 ## PR Guidelines
 
-- Run `pnpm lint && pnpm test` before commits
-- Descriptive commit messages
+- Run `pnpm lint && pnpm typecheck` before commits
+- Descriptive commit messages (conventional format: `type(scope): description`)
 - One feature per PR

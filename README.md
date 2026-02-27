@@ -40,9 +40,12 @@ claude-starter/
 │   ├── plans/
 │   │   ├── ROADMAP.md         # What to build (priority queue)
 │   │   └── IMPLEMENTATION.md  # How to build it (technical guide)
-│   ├── specs/                 # Feature specifications (add your own)
+│   ├── specs/                 # Feature specifications
+│   │   └── TEMPLATE.md        # Spec template to copy
 │   └── knowledge/             # Reference patterns
 │       ├── claude-code-features.md  # Skills, hooks, subagents, permissions
+│       ├── posthog-integration.md   # Analytics setup (client + server)
+│       ├── security-hardening.md    # Dependabot, dependency scanning
 │       ├── telegram-bots.md         # Telegram bot development
 │       ├── monorepo-setup.md        # pnpm workspaces setup
 │       └── supabase-edge-functions.md
@@ -50,17 +53,18 @@ claude-starter/
 └── .gitignore
 ```
 
-## Dual-File Approach
+## File Responsibilities
 
-| File | Purpose | Works With |
-|------|---------|------------|
-| `AGENTS.md` | Project setup, structure, commands | Any AI tool |
-| `CLAUDE.md` | Safety rules, workflow, Claude features | Claude Code |
-| `CODEX.md` | Workflow guidance | Codex |
+| File | Contains | Read By |
+|------|----------|---------|
+| `AGENTS.md` | Setup, structure, commands, safety rules | All AI tools |
+| `CLAUDE.md` | Tool prefs, skills, agents, performance | Claude Code |
+| `CODEX.md` | Workflow, deploy, protected files | Codex |
 
 This separation means:
-- Your project works with Copilot, Cursor, Codex, and other AI tools
-- Claude Code gets its advanced features (skills, hooks, subagents)
+- Safety rules (git, database, env) live in `AGENTS.md` so every tool sees them
+- Claude-specific features (skills, hooks, subagents) stay in `CLAUDE.md`
+- Codex gets its own workflow guidance without reading Claude's config
 - No vendor lock-in on basic project context
 
 ## After /init
@@ -69,15 +73,16 @@ The `/init` command will help you:
 1. Set your project name and description
 2. Choose architecture (monorepo vs standalone)
 3. Select your tech stack
-4. Generate customized `AGENTS.md` and `CLAUDE.md`
-5. Set up `.claude/` directory for agents and skills
+4. Generate customized `AGENTS.md`, `CLAUDE.md`, and `CODEX.md`
+5. Set up `.claude/` directory, `.github/dependabot.yml`, and `.env.example`
 
 ## Key Concepts
 
 | Concept | Description |
 |---------|-------------|
-| **AGENTS.md** | Cross-tool project context - setup, structure, code style |
-| **CLAUDE.md** | Claude-specific - safety, workflow, tool preferences |
+| **AGENTS.md** | Cross-tool project context - setup, structure, code style, safety |
+| **CLAUDE.md** | Claude-specific - tool preferences, skills, agents |
+| **CODEX.md** | Codex-specific - workflow, deployment |
 | **Subagents** | Specialized agents in `.claude/agents/` (separate context) |
 | **Skills** | Autonomous capabilities in `.claude/skills/` (shared context) |
 | **ROADMAP.md** | Strategic planning - what to build, prioritized |

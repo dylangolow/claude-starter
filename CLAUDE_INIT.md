@@ -48,7 +48,13 @@ project/
 │   └── bot/       # Telegram bot, CLI, etc.
 ├── packages/       # Shared code
 │   └── core/      # Types, utils, business logic
-└── docs/
+├── docs/
+│   ├── plans/     # ROADMAP.md, IMPLEMENTATION.md
+│   ├── specs/     # Feature specifications
+│   ├── analytics/ # Event tracking docs
+│   └── knowledge/ # Reusable patterns
+├── .github/       # Dependabot, CI workflows
+└── context/       # Ephemeral files (gitignored)
 ```
 
 **Standalone** (simpler, single-purpose):
@@ -56,6 +62,7 @@ project/
 project/
 ├── src/
 ├── docs/
+├── .github/
 └── package.json
 ```
 
@@ -99,6 +106,8 @@ Ask: "Any of these planned?" (helps include relevant knowledge docs)
 - [ ] Payments/billing
 - [ ] Real-time features (WebSockets, subscriptions)
 - [ ] File uploads/storage
+- [ ] Analytics (PostHog)
+- [ ] CI/CD (GitHub Actions)
 
 ### Step 5: Generate Files
 
@@ -164,7 +173,24 @@ packages:
 #### 9. Update `.gitignore`
 - Ensure `context/` is ignored
 - Ensure `.claude/` agents/skills are committed (NOT ignored)
+- Ensure `.env*` files are ignored (except `.env.example`)
+- Ensure `.mcp.json` is ignored (contains API keys)
 - Add stack-specific ignores
+
+#### 10. Create `.env.example`
+- List all required environment variables with placeholder values
+- Group by service (Database, Auth, Analytics, etc.)
+- Add comments explaining each variable
+
+#### 11. Create `.github/dependabot.yml`
+- Add `npm` ecosystem entry for each workspace directory
+- Add `github-actions` ecosystem entry
+- Weekly schedule, group minor + patch updates
+- See `docs/knowledge/security-hardening.md`
+
+#### 12. Create `docs/analytics/events.md` (if using PostHog)
+- Document each tracked event with when/properties/phase
+- See `docs/knowledge/posthog-integration.md`
 
 ---
 
@@ -182,8 +208,8 @@ After generating files, provide:
 2. **Recommended next steps**, e.g.:
    - `pnpm install`
    - `supabase init` (if using Supabase)
-   - Create first spec in `docs/specs/`
-   - Set up environment variables
+   - Create first spec in `docs/specs/` (use `TEMPLATE.md` as a starting point)
+   - Set up environment variables (copy `.env.example` to `.env.local`)
 
 3. **Offer to help with first task**
    - "Want me to create the initial package structure?"
@@ -263,6 +289,8 @@ Point users to relevant docs based on their choices:
 | Telegram bot | `docs/knowledge/telegram-bots.md` |
 | Monorepo | `docs/knowledge/monorepo-setup.md` |
 | Supabase | `docs/knowledge/supabase-edge-functions.md` |
+| Analytics (PostHog) | `docs/knowledge/posthog-integration.md` |
+| Security / Dependabot | `docs/knowledge/security-hardening.md` |
 | Claude features | `docs/knowledge/claude-code-features.md` |
 
 ---
@@ -271,15 +299,33 @@ Point users to relevant docs based on their choices:
 
 ```
 project/
-├── AGENTS.md              # Cross-tool: setup, structure, commands
-├── CLAUDE.md              # Claude: safety, workflow, tool prefs
-├── CODEX.md               # Codex: workflow guidance
+├── AGENTS.md              # Cross-tool: setup, structure, commands, safety rules
+├── CLAUDE.md              # Claude-specific: tool prefs, skills, agents, performance
+├── CODEX.md               # Codex-specific: workflow, deploy, protected files
 ├── .claude/
 │   ├── agents/            # Custom subagents (YAML frontmatter + prompt)
 │   └── skills/            # Project skills (SKILL.md + supporting files)
+├── .github/
+│   └── dependabot.yml     # Automated dependency updates
+├── .mcp.json              # MCP server config (gitignored)
+├── .env.example           # Required env vars template (committed)
 ├── docs/
 │   ├── plans/             # ROADMAP.md, IMPLEMENTATION.md
-│   ├── specs/             # Feature specifications
+│   ├── specs/             # Feature specifications (use TEMPLATE.md)
+│   ├── analytics/         # Event tracking documentation
 │   └── knowledge/         # Reusable patterns
 └── context/               # Ephemeral files (gitignored)
 ```
+
+### File Responsibility Boundaries
+
+| Concern | File | Why |
+|---------|------|-----|
+| Setup, structure, commands | `AGENTS.md` | All AI tools read it |
+| Git safety, DB safety | `AGENTS.md` | Cross-tool rules |
+| Claude tool prefs, skills, agents | `CLAUDE.md` | Claude-specific features |
+| Codex workflow, deploy | `CODEX.md` | Codex-specific guidance |
+| Session workflow | `AGENTS.md` | Shared across tools |
+| Protected files | Both `CLAUDE.md` and `CODEX.md` | Each tool needs its own copy |
+
+**Key rule**: If a safety rule applies regardless of which AI tool is used, it goes in `AGENTS.md`. If it's about Claude-specific features (skills, hooks, subagents, tool preferences), it goes in `CLAUDE.md`.
