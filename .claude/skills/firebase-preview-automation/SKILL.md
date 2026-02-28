@@ -23,6 +23,7 @@ allowed-tools: Read, Grep, Bash
 3. Deploy both channels with `firebase hosting:channel:deploy`.
 4. Publish both URLs in `GITHUB_STEP_SUMMARY`.
 5. Post or update one sticky PR comment with both preview links.
+6. Publish a `Branch Preview` commit status whose `target_url` points to the stable branch preview URL.
 
 ## Explicit Channel Naming
 
@@ -49,12 +50,22 @@ allowed-tools: Read, Grep, Bash
   - commit
   - PR
   - workflow run
+- Add a second compact line:
+  - `Last updated: <UTC timestamp>`
 - Hide lower-signal diagnostics in a collapsible details block:
   - branch channel
   - commit channel
   - full commit SHA
 
 The comment should feel like a deployment surface, not a raw CI log.
+
+## GitHub Checks Link
+
+- Publish a commit status with:
+  - `context: Branch Preview`
+  - `target_url: <stable branch preview URL>`
+- Use `statuses: write` permission for that status
+- Prefer this over `environment.url` or custom check runs when the destination is an external Firebase URL
 
 ## Required GitHub Settings
 
