@@ -4,17 +4,18 @@
 
 ## Quick Reference
 
-| File | Purpose |
-|------|---------|
-| `AGENTS.md` | Project setup, structure, safety rules (any AI tool) |
-| `CLAUDE.md` | Claude-specific features (this file) |
-| `CODEX.md` | Codex-specific workflow |
-| `.claude/agents/` | Custom subagents |
-| `.claude/skills/` | Project-specific skills |
+| File              | Purpose                                              |
+| ----------------- | ---------------------------------------------------- |
+| `AGENTS.md`       | Project setup, structure, safety rules (any AI tool) |
+| `CLAUDE.md`       | Claude-specific features (this file)                 |
+| `CODEX.md`        | Codex-specific workflow                              |
+| `.claude/agents/` | Custom subagents                                     |
+| `.claude/skills/` | Project-specific skills                              |
 
 ## Protected Files
 
 Do not modify without explicit confirmation:
+
 - `docs/plans/ROADMAP.md` - Priority queue
 - `docs/plans/IMPLEMENTATION.md` - Technical build guide
 - `docs/specs/*.md` - Feature specifications
@@ -44,6 +45,7 @@ model: haiku
 ---
 
 Review code for:
+
 - Security vulnerabilities (OWASP top 10)
 - Performance issues
 - Code style consistency
@@ -56,6 +58,8 @@ Project skills in `.claude/skills/`:
 ```
 .claude/skills/
 ├── commit/
+│   └── SKILL.md
+├── firebase-preview-automation/
 │   └── SKILL.md
 └── security-hardening/
     └── SKILL.md
@@ -72,6 +76,7 @@ See `docs/knowledge/claude-code-features.md` for skill format.
 ## Cloud Cost Optimization
 
 After deploying consolidated services, suggest cleanup of:
+
 - Replaced Cloud Run services
 - Unused Artifact Registry images
 - Deprecated build triggers
@@ -80,14 +85,14 @@ After deploying consolidated services, suggest cleanup of:
 
 Keep context files fresh as the project evolves:
 
-| Change Type | Update Location |
-|-------------|-----------------|
-| New commands, setup, safety rules | `AGENTS.md` |
-| New conventions, gotchas | `AGENTS.md` |
-| Claude-specific patterns | `CLAUDE.md` |
-| Codex-specific workflow | `CODEX.md` |
-| Reusable skills/agents | `.claude/` directory |
-| Reference patterns | `docs/knowledge/` |
+| Change Type                       | Update Location      |
+| --------------------------------- | -------------------- |
+| New commands, setup, safety rules | `AGENTS.md`          |
+| New conventions, gotchas          | `AGENTS.md`          |
+| Claude-specific patterns          | `CLAUDE.md`          |
+| Codex-specific workflow           | `CODEX.md`           |
+| Reusable skills/agents            | `.claude/` directory |
+| Reference patterns                | `docs/knowledge/`    |
 
 ## Current Notes
 
