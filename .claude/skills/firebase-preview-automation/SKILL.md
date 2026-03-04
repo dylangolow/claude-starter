@@ -1,6 +1,6 @@
 ---
 name: firebase-preview-automation
-description: Standard pattern for Firebase Hosting preview deploys in GitHub Actions with both branch-stable and commit-specific preview URLs, plus a single sticky PR comment that surfaces preview links like a deployment card. Use when setting up or fixing preview workflows for frontend apps or static sites on Firebase Hosting.
+description: Standard pattern for Firebase Hosting preview deploys in GitHub Actions with branch-stable previews always on, commit previews gated by a PR checkbox, and sticky PR feedback (comment + runtime state block). Use when setting up or fixing preview workflows for frontend apps or static sites on Firebase Hosting.
 allowed-tools: Read, Grep, Bash
 ---
 
@@ -16,14 +16,37 @@ allowed-tools: Read, Grep, Bash
 
 ## Standard Workflow
 
-1. Build once in GitHub Actions.
-2. Compute two channel IDs:
+1. Trigger on `pull_request` with `types: [opened, synchronize, reopened, edited]`.
+2. Add a guard to avoid self-trigger loops when the workflow edits the PR body:
+   - `github.actor != 'github-actions[bot]'`
+3. Parse a PR checkbox to control commit preview deployment:
+   - `- [ ] Deploy per-commit Firebase preview` (default unchecked)
+4. Build once in GitHub Actions.
+5. Compute two channel IDs:
    - branch-stable channel prefixed with `br-`
    - commit channel prefixed with `commit-`
-3. Deploy both channels with `firebase hosting:channel:deploy`.
-4. Publish both URLs in `GITHUB_STEP_SUMMARY`.
-5. Post or update one sticky PR comment with both preview links.
-6. Publish a `Branch Preview` commit status whose `target_url` points to the stable branch preview URL.
+6. Always deploy branch preview. Deploy commit preview only when checkbox is checked.
+7. When commit preview is checked, first detect whether the current head SHA already has a successful commit preview (reuse URL and skip redeploy if present).
+8. Publish URLs in `GITHUB_STEP_SUMMARY`.
+9. Post or update one sticky PR comment with preview links.
+10. Update a PR body state block so users can see applied settings immediately after editing the checkbox.
+11. Publish a `Branch Preview` commit status whose `target_url` points to the stable branch preview URL.
+
+## PR-Controlled Commit Preview
+
+- Default behavior:
+  - branch preview runs on every PR sync/edit
+  - commit preview is off until explicitly enabled in PR description
+- Checkbox pattern:
+  - `- [ ] Deploy per-commit Firebase preview`
+  - regex-safe parse should support uppercase/lowercase `x`
+- Runtime feedback block in PR body:
+  - start marker: `<!-- preview-settings-state:start -->`
+  - end marker: `<!-- preview-settings-state:end -->`
+  - include:
+    - whether commit preview setting is currently applied as enabled/disabled
+    - last-applied UTC timestamp
+    - workflow run URL
 
 ## Explicit Channel Naming
 
@@ -56,6 +79,8 @@ allowed-tools: Read, Grep, Bash
   - branch channel
   - commit channel
   - full commit SHA
+- If commit preview is disabled, render explicit disabled text instead of a broken link.
+- If commit preview was reused (already existed for head SHA), note that in metadata.
 
 The comment should feel like a deployment surface, not a raw CI log.
 
