@@ -81,6 +81,16 @@ allowed-tools: Read, Grep, Bash
   - full commit SHA
 - If commit preview is disabled, render explicit disabled text instead of a broken link.
 - If commit preview was reused (already existed for head SHA), note that in metadata.
+- Use Vercel status SVGs for the `Deployment` cell (pattern from `projekt`):
+  - building state: `![Building](https://vercel.com/static/status/building.svg) Building`
+  - finalized state: `![<Label>](https://vercel.com/static/status/<icon>.svg) [<Label>](<target_url>)`
+  - icon map:
+    - success: `ready.svg`
+    - failed: `failed.svg`
+    - cancelled: `cancelled.svg`
+  - target URL:
+    - success: branch preview URL
+    - failed/cancelled: workflow run URL
 
 The comment should feel like a deployment surface, not a raw CI log.
 
