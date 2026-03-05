@@ -56,6 +56,7 @@ pnpm typecheck
 - Start: read `AGENTS.md`, then `docs/plans/ROADMAP.md` and `docs/plans/IMPLEMENTATION.md`
 - Before building: read the relevant `docs/specs/*.md`
 - End: update deliverable checkboxes with user confirmation
+- For session-context docs sync, use `.claude/skills/session-doc-updates/SKILL.md`
 
 ## Planning
 
@@ -81,15 +82,18 @@ pnpm test:coverage     # With coverage
 ## Architecture Notes
 
 ### Type System
+
 - Core types in `packages/core/src/types.ts` - source of truth
 - When adding fields, update core package first
 
 ### API Patterns
+
 - Routes in `apps/api/src/routes/` (or `apps/web/src/app/api/` for Next.js)
 - Error handling via shared helpers
 - Consistent logging format
 
 ### Frontend Patterns
+
 - Mobile-first responsive design
 - Component library in `components/ui/`
 
@@ -107,23 +111,27 @@ pnpm test:coverage     # With coverage
 These apply to all AI tools working in this repo:
 
 ### Git Safety
+
 - Never `git push --force` without explicit user confirmation
 - Use `git restore --staged <file>` to unstage (not `git reset`)
 - Never `git reset --hard` without confirmation
 - Always confirm before pushing or destructive actions
 
 ### Database Safety
+
 - Never run destructive commands (`db reset`, `drop table`) without asking
 - Confirm before pushing migrations to remote
 - Never delete `.env` files
 
 ### Environment Variables
+
 - Never commit secrets or `.env` files
 - Reference `.env.example` for required variables (see below)
 
 ## Environment Variables
 
 Required variables (see `.env.example`):
+
 - `DATABASE_URL` - Database connection
 - `API_KEY` - External service key
 

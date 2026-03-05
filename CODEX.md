@@ -19,9 +19,17 @@
 - For small tasks: proceed directly.
 - For medium/large tasks: propose a short plan (3-6 steps) and track progress in `docs/plans/IMPLEMENTATION.md` or the relevant spec.
 
+## Session Docs Skill
+
+- Use `.claude/skills/session-doc-updates/SKILL.md` when asked to sync session context into docs.
+- If needed, copy skill assets into `scripts/` first, then run:
+  - `node scripts/apply-session-doc-updates.mjs --dry-run`
+  - `node scripts/apply-session-doc-updates.mjs`
+
 ## Protected Files
 
 Do not modify without explicit confirmation:
+
 - `docs/plans/ROADMAP.md` - Priority queue
 - `docs/plans/IMPLEMENTATION.md` - Technical build guide
 - `docs/specs/*.md` - Feature specifications

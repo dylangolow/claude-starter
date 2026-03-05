@@ -61,7 +61,9 @@ Project skills in `.claude/skills/`:
 │   └── SKILL.md
 ├── firebase-preview-automation/
 │   └── SKILL.md
-└── security-hardening/
+├── gcloud-config-switching/
+│   └── SKILL.md
+└── session-doc-updates/
     └── SKILL.md
 ```
 
