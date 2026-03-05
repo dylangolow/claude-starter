@@ -5,11 +5,13 @@ A project template for working effectively with AI coding agents, with built-in 
 ## Quick Start
 
 ### Option 1: GitHub Template
+
 1. Click "Use this template" on GitHub
 2. Clone your new repo
 3. Run `claude` and type `/init`
 
 ### Option 2: Clone
+
 ```bash
 git clone https://github.com/yourusername/claude-starter my-project
 cd my-project
@@ -19,6 +21,7 @@ claude
 ```
 
 ### Option 3: Manual Setup
+
 Copy the files you need into your existing project.
 
 ## What's Included
@@ -33,7 +36,10 @@ claude-starter/
 │   ├── agents/            # Custom subagents (YAML frontmatter + prompt)
 │   │   └── code-reviewer.md
 │   └── skills/            # Project skills (SKILL.md + supporting files)
-│       └── commit/
+│       ├── commit/
+│       ├── firebase-preview-automation/ # Firebase preview CI workflow
+│       ├── gcloud-config-switching/ # Multi-project account/project switching
+│       └── session-doc-updates/ # Sync context/session notes into docs/*
 ├── docs/
 │   ├── HOW_TO_USE_CLAUDE.md   # Usage guide and best practices
 │   ├── HOW_TO_USE_CODEX.md    # Usage guide and best practices
@@ -48,6 +54,7 @@ claude-starter/
 │       ├── security-hardening.md    # Dependabot, dependency scanning
 │       ├── telegram-bots.md         # Telegram bot development
 │       ├── monorepo-setup.md        # pnpm workspaces setup
+│       ├── gcloud-config-switching.md # Local gcloud config + direnv workflow
 │       └── supabase-edge-functions.md
 ├── context/               # Ephemeral files (gitignored)
 └── .gitignore
@@ -55,13 +62,14 @@ claude-starter/
 
 ## File Responsibilities
 
-| File | Contains | Read By |
-|------|----------|---------|
+| File        | Contains                                 | Read By      |
+| ----------- | ---------------------------------------- | ------------ |
 | `AGENTS.md` | Setup, structure, commands, safety rules | All AI tools |
-| `CLAUDE.md` | Tool prefs, skills, agents, performance | Claude Code |
-| `CODEX.md` | Workflow, deploy, protected files | Codex |
+| `CLAUDE.md` | Tool prefs, skills, agents, performance  | Claude Code  |
+| `CODEX.md`  | Workflow, deploy, protected files        | Codex        |
 
 This separation means:
+
 - Safety rules (git, database, env) live in `AGENTS.md` so every tool sees them
 - Claude-specific features (skills, hooks, subagents) stay in `CLAUDE.md`
 - Codex gets its own workflow guidance without reading Claude's config
@@ -70,6 +78,7 @@ This separation means:
 ## After /init
 
 The `/init` command will help you:
+
 1. Set your project name and description
 2. Choose architecture (monorepo vs standalone)
 3. Select your tech stack
@@ -78,16 +87,16 @@ The `/init` command will help you:
 
 ## Key Concepts
 
-| Concept | Description |
-|---------|-------------|
-| **AGENTS.md** | Cross-tool project context - setup, structure, code style, safety |
-| **CLAUDE.md** | Claude-specific - tool preferences, skills, agents |
-| **CODEX.md** | Codex-specific - workflow, deployment |
-| **Subagents** | Specialized agents in `.claude/agents/` (separate context) |
-| **Skills** | Autonomous capabilities in `.claude/skills/` (shared context) |
-| **ROADMAP.md** | Strategic planning - what to build, prioritized |
-| **IMPLEMENTATION.md** | Tactical execution - how to build it |
-| **context/** | Ephemeral files (gitignored) - notes, research |
+| Concept               | Description                                                       |
+| --------------------- | ----------------------------------------------------------------- |
+| **AGENTS.md**         | Cross-tool project context - setup, structure, code style, safety |
+| **CLAUDE.md**         | Claude-specific - tool preferences, skills, agents                |
+| **CODEX.md**          | Codex-specific - workflow, deployment                             |
+| **Subagents**         | Specialized agents in `.claude/agents/` (separate context)        |
+| **Skills**            | Autonomous capabilities in `.claude/skills/` (shared context)     |
+| **ROADMAP.md**        | Strategic planning - what to build, prioritized                   |
+| **IMPLEMENTATION.md** | Tactical execution - how to build it                              |
+| **context/**          | Ephemeral files (gitignored) - notes, research                    |
 
 ## YAML Frontmatter
 
