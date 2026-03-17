@@ -105,7 +105,14 @@ The comment should feel like a deployment surface, not a raw CI log.
 ## Required GitHub Settings
 
 - Variable: `FIREBASE_PROJECT_ID`
-- Secret: `FIREBASE_TOKEN`
+- Preferred variables: `GCP_WORKLOAD_IDENTITY_PROVIDER`, `GCP_SERVICE_ACCOUNT_EMAIL`
+- Legacy secret: `FIREBASE_TOKEN`
+
+See [GITHUB_WIF_SETUP.md](./GITHUB_WIF_SETUP.md) for the reusable GitHub OIDC setup flow and the ADC step required for `firebase-tools`.
+
+When handing off setup to a human operator, prefer the repo-local prompt:
+
+`finish setting up firebase wif for this repo`
 
 ## Rule
 
